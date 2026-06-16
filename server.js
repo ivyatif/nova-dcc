@@ -12,9 +12,19 @@ const GHL_TOKEN = process.env.GHL_TOKEN || '';
 const ANTHROPIC_KEY = process.env.ANTHROPIC_KEY || '';
 const GHL_BASE = 'https://services.leadconnectorhq.com';
 
+// Health check — shows if token is loaded
+app.get('/api/health', (req, res) => {
+  res.json({
+    status: 'ok',
+    ghl_token: GHL_TOKEN ? 'loaded (' + GHL_TOKEN.slice(0,8) + '...)' : 'MISSING',
+    anthropic_key: ANTHROPIC_KEY ? 'loaded' : 'MISSING'
+  });
+});
+
 // Proxy GHL requests
 app.all('/api/ghl/*', async (req, res) => {
   try {
+    if (!GHL_TOKEN) return res.status(500).json({ error: 'GHL_TOKEN not set in Railway variables' });
     const ghlPath = req.path.replace('/api/ghl', '');
     const query = new URLSearchParams(req.query).toString();
     const url = GHL_BASE + ghlPath + (query ? '?' + query : '');
@@ -30,16 +40,19 @@ app.all('/api/ghl/*', async (req, res) => {
       options.body = JSON.stringify(req.body);
     }
     const response = await fetch(url, options);
-    const data = await response.json().catch(() => ({}));
+    const text = await response.text();
+    let data;
+    try { data = JSON.parse(text); } catch(e) { data = { raw: text }; }
     res.status(response.status).json(data);
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
-// Proxy Anthropic API requests
+// Proxy Anthropic API
 app.post('/api/nova', async (req, res) => {
   try {
+    if (!ANTHROPIC_KEY) return res.status(500).json({ error: 'ANTHROPIC_KEY not set in Railway variables' });
     const response = await fetch('https://api.anthropic.com/v1/messages', {
       method: 'POST',
       headers: {
