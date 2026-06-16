@@ -69,20 +69,17 @@ textarea{resize:vertical;min-height:80px}
 .stat{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:14px;text-align:center}
 .stat-val{font-size:28px;font-weight:700;color:#1D9E75}
 .stat-lbl{font-size:11px;color:#6b7280;margin-top:3px;font-weight:600;text-transform:uppercase;letter-spacing:.05em}
-/* Products picker */
-.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:10px;max-height:300px;overflow-y:auto;padding:4px}
+.products-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));gap:8px;margin-top:10px;max-height:320px;overflow-y:auto;padding:4px}
 .pcard{background:#f9fafb;border:1.5px solid #e5e7eb;border-radius:10px;padding:12px;cursor:pointer;transition:all .15s}
 .pcard:hover{border-color:#1D9E75;background:#f0faf6}
-.pcard.selected{border-color:#1D9E75;background:#f0faf6;box-shadow:0 0 0 2px rgba(29,158,117,.15)}
+.pcard.selected{border-color:#1D9E75;background:#f0faf6;box-shadow:0 0 0 2px rgba(29,158,117,.2)}
 .pcard-name{font-size:13px;font-weight:600;margin-bottom:3px}
 .pcard-price{font-size:12px;color:#059669;font-weight:700}
 .pcard-desc{font-size:11px;color:#6b7280;margin-top:3px}
-/* Scope table */
 .scope-table{width:100%;border-collapse:collapse;margin-top:10px;font-size:13px}
 .scope-table th{text-align:left;font-size:11px;color:#6b7280;border-bottom:2px solid #e5e7eb;padding:8px 10px;font-weight:700;background:#f9fafb}
 .scope-table td{padding:8px 10px;border-bottom:1px solid #f3f4f6;vertical-align:middle}
 .scope-table input[type=number]{width:70px;padding:5px 8px;font-size:12px}
-.scope-table input[type=text]{padding:5px 8px;font-size:12px}
 .total{text-align:right;font-size:15px;font-weight:700;padding:12px 6px;border-top:2px solid #e5e7eb;margin-top:8px}
 .stepbar{display:flex;gap:4px;margin-bottom:18px}
 .step{flex:1;text-align:center;font-size:11px;padding:9px 4px;background:#f3f4f6;color:#9ca3af;border-radius:8px;font-weight:600;transition:all .2s}
@@ -90,16 +87,15 @@ textarea{resize:vertical;min-height:80px}
 .step.done{background:#d1fae5;color:#059669}
 .log{font-size:12px;font-family:monospace;background:#111827;color:#f3f4f6;border-radius:10px;padding:16px;max-height:280px;overflow-y:auto;line-height:2}
 .log .ok{color:#34d399}.log .er{color:#f87171}.log .in{color:#9ca3af}
+.est-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:10px;transition:all .15s}
+.est-card:hover{border-color:#1D9E75}
 .status-badge{display:inline-flex;padding:3px 10px;border-radius:20px;font-size:11px;font-weight:700}
 .s-draft{background:#f3f4f6;color:#6b7280}
 .s-accepted{background:#d1fae5;color:#059669}
 .s-sent{background:#dbeafe;color:#1d4ed8}
-.est-card{background:#fff;border:1.5px solid #e5e7eb;border-radius:12px;padding:16px;margin-bottom:10px;transition:all .15s}
-.est-card:hover{border-color:#1D9E75;box-shadow:0 2px 8px rgba(29,158,117,.1)}
 </style>
 </head>
 <body>
-
 <div id="lock">
   <div class="lock-box">
     <div class="lock-logo">N</div>
@@ -125,7 +121,7 @@ textarea{resize:vertical;min-height:80px}
 <div class="tabs">
   <button class="tab active" onclick="tab('command')">⚡ Command</button>
   <button class="tab" onclick="tab('contacts')">👥 Contacts</button>
-  <button class="tab" onclick="tab('estimates');loadEstimatesTab()">📋 Estimates</button>
+  <button class="tab" onclick="tab('estimates');loadEstTab()">📋 Estimates</button>
   <button class="tab" onclick="tab('messages')">✉️ Messages</button>
   <button class="tab" onclick="tab('log')">📄 Log</button>
 </div>
@@ -135,11 +131,11 @@ textarea{resize:vertical;min-height:80px}
   <div id="tab-command" class="panel active">
     <div class="card">
       <div class="clabel">What should Nova do?</div>
-      <textarea id="cmdi" placeholder="e.g. 'How many new leads do we have?'&#10;'Find Sophie Pettit and tell me what to do next'&#10;'Create an estimate for Mark Coleman — water damage, 15m², 2 techs, 3 days'&#10;'Draft a re-engagement SMS for a ghosted lead'"></textarea>
+      <textarea id="cmdi" placeholder="e.g. 'How many new leads do we have?'&#10;'Find Sophie Pettit and tell me the next step'&#10;'Create an estimate for Mark Coleman — water damage, 15m², 2 techs, 3 days'&#10;'Draft a re-engagement SMS for a ghosted lead'"></textarea>
       <div class="chips">
         <button class="chip" onclick="quickLoad()">📋 Show recent contacts</button>
-        <button class="chip" onclick="tab('estimates');loadEstimatesTab()">📝 New estimate</button>
-        <button class="chip" onclick="fc('What should I prioritise right now?')">🎯 What to do now</button>
+        <button class="chip" onclick="tab('estimates');loadEstTab()">📝 New estimate</button>
+        <button class="chip" onclick="fc('What should I prioritise right now in the pipeline?')">🎯 What to do now</button>
         <button class="chip" onclick="fc('Draft a re-engagement SMS for a lead ghosted over 30 days')">💬 Re-engage ghosted</button>
       </div>
       <div style="display:flex;gap:8px;margin-top:14px">
@@ -163,7 +159,7 @@ textarea{resize:vertical;min-height:80px}
   <div id="tab-contacts" class="panel">
     <div class="card">
       <div style="display:flex;gap:8px;margin-bottom:14px;align-items:center;flex-wrap:wrap">
-        <input type="text" id="csq" placeholder="🔍  Search by name, email or phone..." style="flex:1;min-width:180px" onkeydown="if(event.key==='Enter')srch()"/>
+        <input type="text" id="csq" placeholder="🔍 Search by name, email or phone..." style="flex:1;min-width:180px" onkeydown="if(event.key==='Enter')srch()"/>
         <button class="btn btn-g" onclick="srch()">Search GHL</button>
         <button class="btn" onclick="loadC()">↻ Load recent</button>
       </div>
@@ -174,16 +170,12 @@ textarea{resize:vertical;min-height:80px}
 
   <!-- ESTIMATES -->
   <div id="tab-estimates" class="panel">
-
-    <!-- Step bar -->
-    <div class="stepbar" id="est-stepbar">
+    <div class="stepbar">
       <div class="step active" id="es0">1. Job details</div>
       <div class="step" id="es1">2. Pick products</div>
       <div class="step" id="es2">3. Review</div>
       <div class="step" id="es3">4. Done ✓</div>
     </div>
-
-    <!-- STEP 0: Job details -->
     <div id="ep0" class="card">
       <div class="fr" style="margin-bottom:10px">
         <div class="fg"><div class="fl">Customer name</div><input type="text" id="en" placeholder="e.g. Mark Coleman"/></div>
@@ -203,79 +195,71 @@ textarea{resize:vertical;min-height:80px}
         <div class="fg"><div class="fl">Safety check?</div><select id="esafe"><option value="no">No</option><option value="yes">Yes</option></select></div>
         <div class="fg"><div class="fl">Revisit?</div><select id="erevis"><option value="no">No</option><option value="yes">Yes</option></select></div>
       </div>
-      <div class="fg"><div class="fl">Job description / report findings</div><textarea id="edesc" placeholder="Paste inspection report or describe the damage..."></textarea></div>
+      <div class="fg"><div class="fl">Job description</div><textarea id="edesc" placeholder="Paste report or describe the damage..."></textarea></div>
       <div style="display:flex;gap:8px;margin-top:14px">
-        <button class="btn btn-g" onclick="goPickProducts()">Next — Pick products ↗</button>
+        <button class="btn btn-g" onclick="goPickProducts()">Next — Pick products →</button>
         <button class="btn btn-sm" onclick="loadEx()">Load example</button>
       </div>
     </div>
-
-    <!-- STEP 1: Pick products -->
     <div id="ep1" style="display:none">
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
           <div class="clabel" style="margin:0">Your GHL products</div>
           <div style="display:flex;gap:6px">
-            <button class="btn btn-sm btn-g" onclick="novaRecommend()">✦ Nova recommends</button>
+            <button class="btn btn-sm btn-g" onclick="novaRec()">✦ Nova recommends</button>
             <button class="btn btn-sm" onclick="loadProducts()">↻ Refresh</button>
           </div>
         </div>
-        <input type="text" id="product-search" placeholder="🔍 Filter products..." oninput="filterProducts()" style="margin-bottom:10px"/>
-        <div id="products-grid" class="products-grid"><div style="color:#6b7280;font-style:italic;padding:16px;text-align:center">Loading products from GHL...</div></div>
+        <input type="text" id="psearch" placeholder="🔍 Filter products..." oninput="filterP()" style="margin-bottom:10px"/>
+        <div id="pgrid" class="products-grid"><div style="color:#6b7280;font-style:italic;padding:16px;text-align:center">Loading products from GHL...</div></div>
       </div>
       <div class="card">
         <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
           <div class="clabel" style="margin:0">Selected items</div>
-          <button class="btn btn-sm" onclick="addCustomRow()">+ Add custom item</button>
+          <button class="btn btn-sm" onclick="addCustom()">+ Custom item</button>
         </div>
-        <table class="scope-table" id="scope-table">
-          <thead><tr><th>Product</th><th>Unit price</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
-          <tbody id="scope-tbody"><tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:16px;font-style:italic">Click products above to add them.</td></tr></tbody>
+        <table class="scope-table">
+          <thead><tr><th>Product</th><th>Unit price (£)</th><th>Qty</th><th>Subtotal</th><th></th></tr></thead>
+          <tbody id="stbody"><tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:16px;font-style:italic">Click products above to add them.</td></tr></tbody>
         </table>
-        <div class="total" id="scope-total">Total: £0.00</div>
-        <div class="fg" style="margin-top:14px"><div class="fl">Estimate notes</div><textarea id="enotes" placeholder="Safety check reason, disposal note, revisit justification..."></textarea></div>
+        <div class="total" id="stotal">Total: £0.00</div>
+        <div class="fg" style="margin-top:14px"><div class="fl">Estimate notes</div><textarea id="enotes" placeholder="Safety check reason, disposal note..."></textarea></div>
         <div style="display:flex;gap:8px;margin-top:14px">
           <button class="btn btn-g" onclick="gs(2)">Review →</button>
           <button class="btn btn-sm" onclick="gs(0)">← Back</button>
         </div>
       </div>
-      <div class="abox" id="nova-rec-box" style="display:none"><div class="atitle">🤖 Nova's recommendation</div><div class="aout" id="nova-rec-out"></div></div>
+      <div class="abox" id="recbox" style="display:none"><div class="atitle">🤖 Nova's recommendation</div><div class="aout" id="recout"></div></div>
     </div>
-
-    <!-- STEP 2: Review -->
     <div id="ep2" style="display:none">
       <div class="card">
         <div style="font-size:16px;font-weight:700;margin-bottom:14px" id="rtitle"></div>
-        <table class="scope-table" id="rev-table">
+        <table class="scope-table">
           <thead><tr><th>Product</th><th>Price</th><th>Qty</th><th>Subtotal</th></tr></thead>
-          <tbody id="rev-tbody"></tbody>
+          <tbody id="rtbody"></tbody>
         </table>
-        <div class="total" id="rtotal">Total: £0.00</div>
-        <div style="margin-top:10px;font-size:13px;color:#6b7280" id="rev-notes"></div>
+        <div class="total" id="rtotal"></div>
+        <div style="margin-top:8px;font-size:13px;color:#6b7280" id="rnotes"></div>
       </div>
       <div style="display:flex;gap:8px;flex-wrap:wrap">
-        <button class="btn btn-g" onclick="createEstimate()">⚡ Create estimate in GHL</button>
+        <button class="btn btn-g" onclick="createEst()">⚡ Create estimate in GHL</button>
         <button class="btn btn-sm" onclick="gs(1)">← Edit</button>
         <button class="btn btn-sm" onclick="sopChk()">✦ SOP check</button>
       </div>
       <div class="abox" id="sopbox" style="display:none"><div class="atitle">✦ SOP check</div><div class="aout" id="sopout"></div></div>
     </div>
-
-    <!-- STEP 3: Done -->
     <div id="ep3" style="display:none">
       <div class="card">
-        <div class="aout" id="gout" style="font-size:14px;line-height:1.8"></div>
-        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap" id="est-actions"></div>
+        <div id="gout" style="font-size:14px;line-height:1.8"></div>
+        <div style="display:flex;gap:8px;margin-top:16px;flex-wrap:wrap" id="estactions"></div>
       </div>
     </div>
-
-    <!-- Existing estimates list -->
     <div class="card" style="margin-top:8px">
       <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
         <div class="clabel" style="margin:0">Existing estimates in GHL</div>
-        <button class="btn btn-sm" onclick="loadExistingEstimates()">↻ Load estimates</button>
+        <button class="btn btn-sm" onclick="loadExEsts()">↻ Load estimates</button>
       </div>
-      <div id="existing-estimates"><div style="color:#9ca3af;font-style:italic;text-align:center;padding:14px">Click "Load estimates" to see your GHL estimates.</div></div>
+      <div id="exests"><div style="color:#9ca3af;font-style:italic;text-align:center;padding:14px">Click "Load estimates" to see your GHL estimates.</div></div>
     </div>
   </div>
 
@@ -303,7 +287,7 @@ textarea{resize:vertical;min-height:80px}
         <div class="clabel" style="margin:0">Action log</div>
         <button class="btn btn-sm" onclick="clrLog()">Clear</button>
       </div>
-      <div class="log" id="alog"><span class="ok">[ready] Nova v2.0 connected to DCC GHL ✓</span></div>
+      <div class="log" id="alog"><span class="ok">[ready] Nova v3.0 — server connected ✓</span></div>
     </div>
   </div>
 
@@ -313,294 +297,194 @@ textarea{resize:vertical;min-height:80px}
 <script>
 const PWD='zNh9rD?=G"33_e3\'BQ';
 const LOC='TWgGz6l5KiTwyqZbcXLG';
-const PROXY='https://novaai-0612.ivy-atif.workers.dev';
-const AKEY='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';
-let SI=[],PA=[],LG=[];
-let allProducts=[];
-let selectedProducts={};
-let lastEstimateId=null;
+// API key handled server-side
+let allP=[],selP={},PA=[],LG=[],lastEstId=null;
+
+const SYS=`You are Nova, AI BDR agent for Disaster Care Capital (DCC), UK disaster restoration (water, mould, fire). GHL location: TWgGz6l5KiTwyqZbcXLG. SOP: initial visit £250, dehumidifier dry-out by m², mould treatment+antimicrobial by m², fire restoration, PPE per tech per day, 1 senior+junior techs, disposal in lbs, revisit if needed, safety check with note. Invoice mirrors estimate, due 7 days. When planning actions output: ACTION_PLAN: [{"type":"search_contacts"|"create_estimate"|"create_invoice"|"send_message"|"update_contact","params":{...},"description":"readable"}]`;
 
 function unlock(){const v=document.getElementById('pw').value;if(v===PWD){sessionStorage.setItem('nova_auth','1');document.getElementById('lock').style.display='none';document.getElementById('app').style.display='block';}else{document.getElementById('pw-err').textContent='Incorrect password.';document.getElementById('pw').value='';document.getElementById('pw').focus();}}
 function logout(){sessionStorage.removeItem('nova_auth');document.getElementById('lock').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('pw-err').textContent='';}
 if(sessionStorage.getItem('nova_auth')==='1'){document.getElementById('lock').style.display='none';document.getElementById('app').style.display='block';}
 
-const SYS=`You are Nova, AI BDR agent for Disaster Care Capital (DCC), UK disaster restoration (water, mould, fire). GHL location: TWgGz6l5KiTwyqZbcXLG. SOP: initial visit £250, dehumidifier dry-out by m², mould treatment+antimicrobial by m², fire restoration, PPE per tech per day, 1 senior+junior techs, disposal in lbs, revisit if needed, safety check with note. Invoice mirrors estimate, due 7 days. When planning actions output: ACTION_PLAN: [{"type":"search_contacts"|"create_estimate"|"create_invoice"|"send_message"|"update_contact","params":{...},"description":"readable"}]`;
+// All GHL calls go through server proxy
+async function ghl(path,method,body){
+  const opts={method,headers:{'Content-Type':'application/json'}};
+  if(body)opts.body=JSON.stringify(body);
+  const r=await fetch('/api/ghl'+path,opts);
+  return r;
+}
 
-async function ghl(p,m,b){const o={method:m,headers:{'Content-Type':'application/json'}};if(b)o.body=JSON.stringify(b);return fetch(PROXY+'/proxy'+p,o);}
 function lg(t,m){LG.push({t,m,ts:new Date().toLocaleTimeString()});document.getElementById('alog').innerHTML=LG.slice().reverse().map(l=>'<div class="'+l.t+'">['+l.ts+'] '+l.m+'</div>').join('');}
 function clrLog(){LG=[];document.getElementById('alog').innerHTML='<span class="in">Cleared.</span>';}
 function tab(t){document.querySelectorAll('.panel').forEach(p=>p.classList.remove('active'));document.querySelectorAll('.tab').forEach(b=>b.classList.remove('active'));document.getElementById('tab-'+t).classList.add('active');['command','contacts','estimates','messages','log'].forEach((x,i)=>{if(x===t)document.querySelectorAll('.tab')[i].classList.add('active');});}
 function fc(t){document.getElementById('cmdi').value=t;}
 async function quickLoad(){tab('contacts');await loadC();}
-
-function loadEstimatesTab(){
-  loadProducts();
-  loadExistingEstimates();
-}
+function loadEstTab(){loadProducts();loadExEsts();}
 
 // PRODUCTS
 async function loadProducts(){
-  document.getElementById('products-grid').innerHTML='<div style="color:#6b7280;font-style:italic;padding:16px;text-align:center">Loading from GHL...</div>';
+  document.getElementById('pgrid').innerHTML='<div style="color:#6b7280;font-style:italic;padding:16px;text-align:center">Loading from GHL...</div>';
   try{
     const r=await ghl('/products/?locationId='+LOC+'&limit=100','GET');
     const d=await r.json();
-    if(r.ok){
-      allProducts=d.products||d.list||[];
-      lg('ok','Loaded '+allProducts.length+' products');
-      renderProducts(allProducts);
-    }else{
-      lg('er','Products error: '+r.status+' '+JSON.stringify(d).slice(0,80));
-      document.getElementById('products-grid').innerHTML='<div style="color:#dc2626;padding:16px">Error loading products: '+r.status+'</div>';
-    }
-  }catch(e){lg('er','Products failed: '+e.message);document.getElementById('products-grid').innerHTML='<div style="color:#dc2626;padding:16px">Failed: '+e.message+'</div>';}
+    allP=d.products||d.list||[];
+    lg('ok','Loaded '+allP.length+' products');
+    renderP(allP);
+  }catch(e){lg('er','Products: '+e.message);document.getElementById('pgrid').innerHTML='<div style="color:#dc2626;padding:16px">Error: '+e.message+'</div>';}
 }
 
-function renderProducts(list){
-  if(!list.length){document.getElementById('products-grid').innerHTML='<div style="color:#9ca3af;padding:16px;text-align:center;font-style:italic">No products found in GHL.</div>';return;}
-  document.getElementById('products-grid').innerHTML=list.map(p=>{
-    const price=p.price||p.amount||0;
+function renderP(list){
+  if(!list.length){document.getElementById('pgrid').innerHTML='<div style="color:#9ca3af;padding:16px;text-align:center">No products found.</div>';return;}
+  document.getElementById('pgrid').innerHTML=list.map(p=>{
     const pid=p._id||p.id||'';
-    const sel=selectedProducts[pid]?'selected':'';
-    return `<div class="pcard ${sel}" id="pcard-${pid}" onclick="toggleProduct('${pid}')">
+    const price=parseFloat(p.price||p.amount||0);
+    const sel=selP[pid]?'selected':'';
+    return `<div class="pcard ${sel}" id="pc-${pid}" onclick="toggleP('${pid}')">
       <div class="pcard-name">${p.name}</div>
-      <div class="pcard-price">£${parseFloat(price).toFixed(2)}</div>
+      <div class="pcard-price">£${price.toFixed(2)}</div>
       ${p.description?`<div class="pcard-desc">${p.description.slice(0,60)}</div>`:''}
     </div>`;
   }).join('');
 }
 
-function filterProducts(){
-  const q=document.getElementById('product-search').value.toLowerCase();
-  const filtered=allProducts.filter(p=>(p.name||'').toLowerCase().includes(q)||(p.description||'').toLowerCase().includes(q));
-  renderProducts(filtered);
+function filterP(){const q=document.getElementById('psearch').value.toLowerCase();renderP(allP.filter(p=>(p.name||'').toLowerCase().includes(q)));}
+
+function toggleP(pid){
+  const p=allP.find(x=>(x._id||x.id||'')==pid);if(!p)return;
+  if(selP[pid]){delete selP[pid];document.getElementById('pc-'+pid)?.classList.remove('selected');}
+  else{selP[pid]={...p,qty:1,price:parseFloat(p.price||p.amount||0)};document.getElementById('pc-'+pid)?.classList.add('selected');}
+  renderScope();
 }
 
-function toggleProduct(pid){
-  const prod=allProducts.find(p=>(p._id||p.id||'')==pid);
-  if(!prod)return;
-  if(selectedProducts[pid]){
-    delete selectedProducts[pid];
-    document.getElementById('pcard-'+pid)?.classList.remove('selected');
-  }else{
-    selectedProducts[pid]={...prod,qty:1,price:parseFloat(prod.price||prod.amount||0)};
-    document.getElementById('pcard-'+pid)?.classList.add('selected');
-  }
-  renderScopeTable();
-}
-
-function renderScopeTable(){
-  const items=Object.values(selectedProducts);
-  const tbody=document.getElementById('scope-tbody');
-  if(!items.length){tbody.innerHTML='<tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:16px;font-style:italic">Click products above to add them.</td></tr>';document.getElementById('scope-total').textContent='Total: £0.00';return;}
-  tbody.innerHTML=items.map((p,i)=>{
+function renderScope(){
+  const items=Object.values(selP);
+  const tb=document.getElementById('stbody');
+  if(!items.length){tb.innerHTML='<tr><td colspan="5" style="color:#9ca3af;text-align:center;padding:16px;font-style:italic">Click products above to add them.</td></tr>';document.getElementById('stotal').textContent='Total: £0.00';return;}
+  tb.innerHTML=items.map(p=>{
     const pid=p._id||p.id||'';
     return `<tr>
       <td style="font-weight:600">${p.name}</td>
-      <td><input type="number" value="${p.price.toFixed(2)}" style="width:80px" onchange="updatePrice('${pid}',this.value)"/></td>
-      <td><input type="number" value="${p.qty}" min="1" style="width:60px" onchange="updateQty('${pid}',this.value)"/></td>
+      <td><input type="number" value="${p.price.toFixed(2)}" style="width:80px" onchange="selP['${pid}'].price=parseFloat(this.value)||0;renderScope()"/></td>
+      <td><input type="number" value="${p.qty}" min="1" style="width:60px" onchange="selP['${pid}'].qty=parseInt(this.value)||1;renderScope()"/></td>
       <td style="font-weight:700">£${(p.price*p.qty).toFixed(2)}</td>
-      <td><button class="btn btn-sm" style="color:#dc2626;padding:3px 8px" onclick="removeProduct('${pid}')">✕</button></td>
+      <td><button class="btn btn-sm" style="color:#dc2626;padding:3px 8px" onclick="delete selP['${pid}'];document.getElementById('pc-${pid}')?.classList.remove('selected');renderScope()">✕</button></td>
     </tr>`;
   }).join('');
-  const total=items.reduce((s,p)=>s+p.price*p.qty,0);
-  document.getElementById('scope-total').textContent='Total: £'+total.toFixed(2);
+  document.getElementById('stotal').textContent='Total: £'+items.reduce((s,p)=>s+p.price*p.qty,0).toFixed(2);
 }
 
-function updatePrice(pid,v){if(selectedProducts[pid]){selectedProducts[pid].price=parseFloat(v)||0;renderScopeTable();}}
-function updateQty(pid,v){if(selectedProducts[pid]){selectedProducts[pid].qty=parseInt(v)||1;renderScopeTable();}}
-function removeProduct(pid){delete selectedProducts[pid];document.getElementById('pcard-'+pid)?.classList.remove('selected');renderScopeTable();}
+function addCustom(){const id='c-'+Date.now();selP[id]={_id:id,name:'Custom item',price:0,qty:1};renderScope();}
 
-function addCustomRow(){
-  const id='custom-'+Date.now();
-  selectedProducts[id]={_id:id,name:'Custom item',price:0,qty:1};
-  renderScopeTable();
+async function novaRec(){
+  const j=gJ();document.getElementById('recbox').style.display='block';document.getElementById('recout').innerHTML='<span class="loading">Nova is analysing the job...</span>';
+  const pl=allP.map(p=>`- ${p.name} (£${parseFloat(p.price||0).toFixed(2)})`).join('\n');
+  const resp=await nova(`Based on this DCC job, which products from the catalogue should be on the estimate, at what quantity?\nJob: ${j.type}|${j.area}m²|${j.techs} techs×${j.days} days|disposal:${j.disp}|safety:${j.safe}|revisit:${j.revis}\nDesc: ${j.desc}\nProducts:\n${pl}`);
+  document.getElementById('recout').textContent=resp;
 }
 
-async function novaRecommend(){
-  const j=gJ();
-  const box=document.getElementById('nova-rec-box');
-  box.style.display='block';
-  document.getElementById('nova-rec-out').innerHTML='<span class="loading">Nova is analysing the job and recommending products...</span>';
-  const productList=allProducts.map(p=>`- ${p.name} (£${parseFloat(p.price||0).toFixed(2)})`).join('\n');
-  const resp=await nova(`Based on this DCC job, which products from the catalogue should be added to the estimate, and at what quantity?\n\nJob: ${j.type} | ${j.area}m² | ${j.techs} techs × ${j.days} days | disposal:${j.disp} | safety:${j.safe} | revisit:${j.revis}\nDescription: ${j.desc}\n\nAvailable products:\n${productList}\n\nList each recommended product with quantity and brief reason.`);
-  document.getElementById('nova-rec-out').textContent=resp;
-}
+async function goPickProducts(){gs(1);if(!allP.length)await loadProducts();}
 
-async function goPickProducts(){
-  gs(1);
-  if(!allProducts.length)await loadProducts();
-}
+function gs(n){[0,1,2,3].forEach(i=>{document.getElementById('ep'+i).style.display=i===n?'block':'none';document.getElementById('es'+i).className='step'+(i<n?' done':i===n?' active':'');});if(n===2)buildRev();}
 
-function gs(n){[0,1,2,3].forEach(i=>{document.getElementById('ep'+i).style.display=i===n?'block':'none';document.getElementById('es'+i).className='step'+(i<n?' done':i===n?' active':'');});if(n===2)buildReview();}
-
-function buildReview(){
-  const j=gJ();
-  const items=Object.values(selectedProducts);
-  document.getElementById('rtitle').textContent=(j.name||'New estimate')+' — '+(j.type||'job')+' '+(j.area?'('+j.area+'m²)':'');
-  const tbody=document.getElementById('rev-tbody');
-  tbody.innerHTML=items.map(p=>`<tr><td style="font-weight:600">${p.name}</td><td>£${p.price.toFixed(2)}</td><td>${p.qty}</td><td style="font-weight:700">£${(p.price*p.qty).toFixed(2)}</td></tr>`).join('')||'<tr><td colspan="4" style="color:#9ca3af;padding:12px">No items selected.</td></tr>';
-  const total=items.reduce((s,p)=>s+p.price*p.qty,0);
-  document.getElementById('rtotal').textContent='Total: £'+total.toFixed(2);
+function buildRev(){
+  const j=gJ();const items=Object.values(selP);
+  document.getElementById('rtitle').textContent=(j.name||'New estimate')+' — '+(j.type||'job')+(j.area?' ('+j.area+'m²)':'');
+  document.getElementById('rtbody').innerHTML=items.map(p=>`<tr><td style="font-weight:600">${p.name}</td><td>£${p.price.toFixed(2)}</td><td>${p.qty}</td><td style="font-weight:700">£${(p.price*p.qty).toFixed(2)}</td></tr>`).join('')||'<tr><td colspan="4" style="color:#9ca3af;padding:12px">No items.</td></tr>';
+  document.getElementById('rtotal').textContent='Total: £'+items.reduce((s,p)=>s+p.price*p.qty,0).toFixed(2);
   const notes=document.getElementById('enotes').value;
-  document.getElementById('rev-notes').textContent=notes?'Notes: '+notes:'';
+  document.getElementById('rnotes').textContent=notes?'Notes: '+notes:'';
 }
 
-async function createEstimate(){
-  gs(3);
-  const o=document.getElementById('gout');
-  const j=gJ();
-  const items=Object.values(selectedProducts);
+async function createEst(){
+  gs(3);const o=document.getElementById('gout');const j=gJ();const items=Object.values(selP);
   o.innerHTML='<span class="loading">Creating estimate in GHL...</span>';
   lg('in','Creating estimate for '+j.name+'...');
-  const lineItems=items.map(p=>({
-    name:p.name,
-    amount:p.price,
-    qty:p.qty,
-    ...(p._id&&!p._id.startsWith('custom-')?{productId:p._id}:{})
-  }));
-  const body={locationId:LOC,name:'Estimate — '+(j.name||'New customer'),...(j.cid?{contactId:j.cid}:{}),lineItems,status:'draft',...(j.notes?{notes:j.notes}:{})};
+  const body={locationId:LOC,name:'Estimate — '+(j.name||'Customer'),...(j.cid?{contactId:j.cid}:{}),lineItems:items.map(p=>({name:p.name,amount:p.price,qty:p.qty,...(p._id&&!p._id.startsWith('c-')?{productId:p._id}:{})})),status:'draft',...(j.notes?{notes:j.notes}:{})};
   try{
-    // Try v2 estimate endpoint first, fall back to invoice endpoint
-    let r=await ghl('/payments/estimates/','POST',body);
-    if(r.status===404) r=await ghl('/payments/invoices/','POST',body);
+    const r=await ghl('/payments/invoices','POST',body);
     const d=await r.json();
     if(r.ok){
-      lastEstimateId=d.id||d._id||d.estimateId||null;
+      lastEstId=d.id||d._id||null;
       const total=items.reduce((s,p)=>s+p.price*p.qty,0);
-      lg('ok','✓ Estimate created — ID: '+lastEstimateId);
+      lg('ok','✓ Estimate created — ID: '+lastEstId);
       o.innerHTML=`<div style="font-size:15px;font-weight:700;color:#059669;margin-bottom:10px">✅ Estimate created in GHL!</div>
-<div style="font-size:13px;line-height:2;color:#374151">
-<strong>ID:</strong> ${lastEstimateId}<br>
-<strong>Customer:</strong> ${j.name||'—'}<br>
-<strong>Items:</strong> ${items.length}<br>
-<strong>Total:</strong> £${total.toFixed(2)}<br>
-</div>
-<div style="margin-top:12px;padding:12px;background:#fffbeb;border-radius:8px;font-size:12px;color:#92400E;border:1px solid #FCD34D">
-<strong>Next SOP steps:</strong><br>
-1. Open GHL → Payments → Estimates<br>
-2. Add your work email first<br>
-3. Mark as Accepted → then Unmark<br>
-4. Replace with customer details → Download PDF → Send
-</div>`;
-      document.getElementById('est-actions').innerHTML=`
-        <button class="btn btn-g" onclick="markAccepted()">✓ Mark accepted</button>
-        <button class="btn btn-b" onclick="convertToInvoice()">📄 Convert to invoice</button>
-        <button class="btn btn-sm" onclick="gs(0);selectedProducts={};">+ New estimate</button>`;
+<div style="font-size:13px;line-height:2;color:#374151"><strong>ID:</strong> ${lastEstId}<br><strong>Customer:</strong> ${j.name||'—'}<br><strong>Items:</strong> ${items.length}<br><strong>Total:</strong> £${total.toFixed(2)}</div>
+<div style="margin-top:12px;padding:12px;background:#fffbeb;border-radius:8px;font-size:12px;color:#92400E;border:1px solid #FCD34D"><strong>SOP next steps:</strong><br>1. GHL → Payments → Estimates<br>2. Add your work email first<br>3. Mark Accepted → Unmark<br>4. Add customer details → Download PDF → Send</div>`;
+      document.getElementById('estactions').innerHTML=`<button class="btn btn-g" onclick="markAcc()">✓ Mark accepted</button><button class="btn btn-b" onclick="toInvoice()">📄 Convert to invoice</button><button class="btn btn-sm" onclick="gs(0);selP={};">+ New estimate</button>`;
     }else{
-      lg('er','Failed: '+r.status);
-      o.innerHTML='<div style="color:#dc2626">Error '+r.status+':<br>'+JSON.stringify(d,null,2).slice(0,300)+'</div>';
+      lg('er','Failed '+r.status+': '+JSON.stringify(d).slice(0,100));
+      o.innerHTML='<div style="color:#dc2626">Error '+r.status+':<br><pre style="font-size:12px">'+JSON.stringify(d,null,2).slice(0,400)+'</pre></div>';
     }
   }catch(e){lg('er',e.message);o.innerHTML='<div style="color:#dc2626">Error: '+e.message+'</div>';}
 }
 
-async function markAccepted(){
-  if(!lastEstimateId){alert('No estimate ID found.');return;}
-  lg('in','Marking estimate accepted...');
-  try{
-    const r=await ghl('/payments/invoices/'+lastEstimateId,'PUT',{status:'accepted'});
-    const d=await r.json();
-    lg(r.ok?'ok':'er','Mark accepted: '+(r.ok?'✓':'Error '+r.status+' '+JSON.stringify(d).slice(0,80)));
-    if(r.ok)alert('✅ Estimate marked as accepted in GHL!');
-    else alert('Error: '+r.status+'\n'+JSON.stringify(d).slice(0,200));
-  }catch(e){lg('er',e.message);}
+async function markAcc(){
+  if(!lastEstId)return;
+  const r=await ghl('/payments/invoices/'+lastEstId,'PUT',{status:'accepted'});
+  const d=await r.json();
+  lg(r.ok?'ok':'er','Mark accepted: '+(r.ok?'✓':'Error '+r.status+' '+JSON.stringify(d).slice(0,80)));
+  if(r.ok)alert('✅ Estimate marked as accepted!');
 }
 
-async function convertToInvoice(){
-  if(!lastEstimateId){alert('No estimate ID found.');return;}
-  const items=Object.values(selectedProducts);
+async function toInvoice(){
+  if(!lastEstId)return;
+  const items=Object.values(selP);const j=gJ();
   const due=new Date();due.setDate(due.getDate()+7);
-  const j=gJ();
-  lg('in','Converting to invoice...');
-  const body={locationId:LOC,name:'Invoice — '+(j.name||'Customer'),...(j.cid?{contactId:j.cid}:{}),lineItems:items.map(p=>({name:p.name,amount:p.price,qty:p.qty,...(p._id&&!p._id.startsWith('custom-')?{productId:p._id}:{})})),status:'draft',dueDate:due.toISOString()};
-  try{
-    const r=await ghl('/payments/invoices/','POST',{...body,invoiceType:'estimate'});
-    const d=await r.json();
-    if(r.ok){
-      const id=d.id||d._id||'—';
-      lg('ok','✓ Invoice created — ID: '+id);
-      const total=items.reduce((s,p)=>s+p.price*p.qty,0);
-      const o=document.getElementById('gout');
-      o.innerHTML+=`<div style="margin-top:14px;padding:14px;background:#f0faf6;border-radius:10px;border:1.5px solid #6EE7B7">
-<div style="font-size:14px;font-weight:700;color:#059669;margin-bottom:6px">📄 Invoice created!</div>
-<div style="font-size:13px;line-height:2;color:#374151">
-<strong>Invoice ID:</strong> ${id}<br>
-<strong>Total:</strong> £${total.toFixed(2)}<br>
-<strong>Due date:</strong> ${due.toLocaleDateString('en-GB')}<br>
-</div>
-<div style="margin-top:8px;font-size:12px;color:#6b7280">Go to GHL → Payments → Invoices to send the payment link.</div>
-</div>`;
-    }else{
-      lg('er','Invoice failed: '+r.status);
-      alert('Error creating invoice: '+r.status+'\n'+JSON.stringify(d).slice(0,200));
-    }
-  }catch(e){lg('er',e.message);alert('Error: '+e.message);}
+  const body={locationId:LOC,name:'Invoice — '+(j.name||'Customer'),...(j.cid?{contactId:j.cid}:{}),lineItems:items.map(p=>({name:p.name,amount:p.price,qty:p.qty,...(p._id&&!p._id.startsWith('c-')?{productId:p._id}:{})})),status:'draft',dueDate:due.toISOString()};
+  const r=await ghl('/payments/invoices','POST',body);
+  const d=await r.json();
+  if(r.ok){lg('ok','✓ Invoice created — ID:'+(d.id||d._id));const total=items.reduce((s,p)=>s+p.price*p.qty,0);document.getElementById('gout').innerHTML+='<div style="margin-top:14px;padding:14px;background:#f0faf6;border-radius:10px;border:1.5px solid #6EE7B7"><div style="font-size:14px;font-weight:700;color:#059669;margin-bottom:6px">📄 Invoice created!</div><div style="font-size:13px;line-height:2"><strong>Invoice ID:</strong> '+(d.id||d._id||'—')+'<br><strong>Total:</strong> £'+total.toFixed(2)+'<br><strong>Due:</strong> '+due.toLocaleDateString('en-GB')+'</div></div>';}
+  else{lg('er','Invoice failed: '+r.status);alert('Error: '+r.status+'\n'+JSON.stringify(d).slice(0,200));}
 }
 
-async function loadExistingEstimates(){
-  document.getElementById('existing-estimates').innerHTML='<div style="color:#6b7280;font-style:italic;padding:12px;text-align:center">Loading...</div>';
+async function loadExEsts(){
+  document.getElementById('exests').innerHTML='<div style="color:#6b7280;font-style:italic;padding:12px;text-align:center">Loading...</div>';
   try{
-    let r=await ghl('/payments/estimates/?locationId='+LOC+'&limit=20','GET');
-    if(r.status===404) r=await ghl('/payments/invoices/?locationId='+LOC+'&limit=20','GET');
+    const r=await ghl('/payments/invoices/?locationId='+LOC+'&limit=20','GET');
     const d=await r.json();
     if(r.ok){
-      const ests=d.estimates||d.invoices||d.list||[];
-      lg('ok','Loaded '+ests.length+' estimates');
-      if(!ests.length){document.getElementById('existing-estimates').innerHTML='<div style="color:#9ca3af;padding:12px;text-align:center;font-style:italic">No estimates found.</div>';return;}
-      document.getElementById('existing-estimates').innerHTML=ests.map(e=>{
+      const ests=d.invoices||d.list||[];
+      if(!ests.length){document.getElementById('exests').innerHTML='<div style="color:#9ca3af;padding:12px;text-align:center;font-style:italic">No estimates found.</div>';return;}
+      document.getElementById('exests').innerHTML=ests.map(e=>{
         const total=((e.lineItems||[]).reduce((s,l)=>s+(l.amount||0)*(l.qty||1),0)).toFixed(2);
         const status=e.status||'draft';
-        const badgeCls=status==='accepted'?'s-accepted':status==='sent'?'s-sent':'s-draft';
-        return `<div class="est-card">
-          <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-            <div>
-              <div style="font-size:14px;font-weight:700">${e.name||'Estimate'}</div>
-              <div style="font-size:12px;color:#6b7280;margin-top:3px">${e.contactName||''} · ${e.lineItems?.length||0} items · £${total}</div>
-            </div>
-            <div style="display:flex;align-items:center;gap:8px">
-              <span class="status-badge ${badgeCls}">${status}</span>
-              <button class="btn btn-sm btn-g" onclick="convertEstToInvoice('${e._id||e.id}','${(e.name||'Invoice').replace(/'/g,'')}','${e.contactId||''}',${JSON.stringify(e.lineItems||[]).replace(/'/g,"\\'")})">📄 To Invoice</button>
-              ${status!=='accepted'?`<button class="btn btn-sm" onclick="updateEstStatus('${e._id||e.id}','accepted')">✓ Accept</button>`:''}
-            </div>
-          </div>
-        </div>`;
+        const bc=status==='accepted'?'s-accepted':status==='sent'?'s-sent':'s-draft';
+        const eid=(e._id||e.id||'').replace(/'/g,'');
+        const ename=(e.name||'Estimate').replace(/'/g,'');
+        const ecid=(e.contactId||'').replace(/'/g,'');
+        const eli=JSON.stringify(e.lineItems||[]).replace(/\\/g,'\\\\').replace(/'/g,"\\'");
+        return `<div class="est-card"><div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px"><div><div style="font-size:14px;font-weight:700">${e.name||'Estimate'}</div><div style="font-size:12px;color:#6b7280;margin-top:3px">${e.contactName||''} · ${e.lineItems?.length||0} items · £${total}</div></div><div style="display:flex;align-items:center;gap:8px"><span class="status-badge ${bc}">${status}</span><button class="btn btn-sm btn-b" onclick="convEst('${eid}','${ename}','${ecid}')">📄 To Invoice</button>${status!=='accepted'?`<button class="btn btn-sm" onclick="updEst('${eid}','accepted')">✓ Accept</button>`:''}</div></div></div>`;
       }).join('');
-    }else{
-      lg('er','Estimates error: '+r.status);
-      document.getElementById('existing-estimates').innerHTML='<div style="color:#dc2626;padding:12px">Error: '+r.status+'</div>';
-    }
-  }catch(e){lg('er',e.message);document.getElementById('existing-estimates').innerHTML='<div style="color:#dc2626;padding:12px">Failed: '+e.message+'</div>';}
-}
-
-async function updateEstStatus(id,status){
-  lg('in','Updating estimate '+id+' to '+status+'...');
-  try{const r=await ghl('/payments/invoices/'+id,'PUT',{status});const d=await r.json();lg(r.ok?'ok':'er','Status update: '+(r.ok?'✓ '+status:'Error '+r.status));if(r.ok)loadExistingEstimates();}catch(e){lg('er',e.message);}
-}
-
-async function convertEstToInvoice(estId,name,contactId,lineItems){
-  const due=new Date();due.setDate(due.getDate()+7);
-  lg('in','Converting estimate to invoice...');
-  const body={locationId:LOC,name:name.replace('Estimate','Invoice'),...(contactId?{contactId}:{}),lineItems,status:'draft',dueDate:due.toISOString()};
-  try{
-    const r=await ghl('/payments/invoices/','POST',{...body,invoiceType:'estimate'});const d=await r.json();
-    if(r.ok){lg('ok','✓ Invoice created from estimate — ID:'+(d.id||d._id));alert('✅ Invoice created!\nID: '+(d.id||d._id)+'\nDue: '+due.toLocaleDateString('en-GB')+'\n\nGo to GHL → Payments → Invoices to send.');}
-    else{lg('er','Invoice failed: '+r.status);alert('Error: '+r.status+'\n'+JSON.stringify(d).slice(0,200));}
+      lg('ok','Loaded '+ests.length+' estimates');
+    }else{document.getElementById('exests').innerHTML='<div style="color:#dc2626;padding:12px">Error: '+r.status+'</div>';lg('er','Estimates: '+r.status);}
   }catch(e){lg('er',e.message);}
+}
+
+async function updEst(id,status){const r=await ghl('/payments/invoices/'+id,'PUT',{status});const d=await r.json();lg(r.ok?'ok':'er','Status: '+(r.ok?'✓ '+status:'Error '+r.status));if(r.ok)loadExEsts();}
+
+async function convEst(id,name,cid){
+  const due=new Date();due.setDate(due.getDate()+7);
+  const estR=await ghl('/payments/invoices/'+id,'GET');
+  const estD=await estR.json();
+  const lineItems=(estD.lineItems||estD.invoice?.lineItems||[]);
+  const body={locationId:LOC,name:name.replace('Estimate','Invoice'),...(cid?{contactId:cid}:{}),lineItems,status:'draft',dueDate:due.toISOString()};
+  const r=await ghl('/payments/invoices','POST',body);const d=await r.json();
+  if(r.ok){lg('ok','✓ Invoice from estimate — ID:'+(d.id||d._id));alert('✅ Invoice created!\nID: '+(d.id||d._id)+'\nDue: '+due.toLocaleDateString('en-GB')+'\n\nGo to GHL → Payments → Invoices to send.');}
+  else{lg('er','Invoice failed: '+r.status);alert('Error: '+r.status+'\n'+JSON.stringify(d).slice(0,200));}
 }
 
 async function sopChk(){
   document.getElementById('sopbox').style.display='block';document.getElementById('sopout').innerHTML='<span class="loading">Checking...</span>';
-  const j=gJ();const items=Object.values(selectedProducts);
-  const resp=await nova('Check this DCC estimate scope against SOP. Flag anything missing.\nJob: '+j.type+' | '+j.area+'m² | '+j.techs+' techs × '+j.days+' | disposal:'+j.disp+' | safety:'+j.safe+'\nItems:\n'+items.map(p=>p.name+' x'+p.qty+' @ £'+p.price).join('\n'));
+  const j=gJ();const items=Object.values(selP);
+  const resp=await nova('Check this DCC estimate against SOP. Flag anything missing.\nJob: '+j.type+'|'+j.area+'m²|'+j.techs+' techs×'+j.days+' days|disposal:'+j.disp+'|safety:'+j.safe+'\nItems:\n'+items.map(p=>p.name+' x'+p.qty+' @ £'+p.price).join('\n'));
   document.getElementById('sopout').textContent=resp;
 }
 
 // COMMAND
 async function runCmd(){
   const cmd=document.getElementById('cmdi').value.trim();if(!cmd)return;
-  document.getElementById('cbox').style.display='block';
-  document.getElementById('cout').innerHTML='<span class="loading">Nova is thinking...</span>';
-  document.getElementById('awrap').style.display='none';
-  document.getElementById('cmd-results').innerHTML='';
+  document.getElementById('cbox').style.display='block';document.getElementById('cout').innerHTML='<span class="loading">Nova is thinking...</span>';
+  document.getElementById('awrap').style.display='none';document.getElementById('cmd-results').innerHTML='';
   const r=await nova('GHL Location:'+LOC+'\nCommand:'+cmd);
   const m=r.match(/ACTION_PLAN:\s*(\[[\s\S]*?\])/);
   document.getElementById('cout').textContent=r.replace(/ACTION_PLAN:[\s\S]*$/,'').trim();
@@ -608,32 +492,27 @@ async function runCmd(){
 }
 function rPA(){if(!PA.length)return;document.getElementById('awrap').style.display='block';document.getElementById('alist').innerHTML=PA.map((a,i)=>'<div class="aitem"><span class="abadge">'+a.type+'</span><span style="flex:1">'+a.description+'</span><button class="btn btn-sm" onclick="PA.splice('+i+',1);rPA()" style="color:#dc2626;padding:3px 8px">✕</button></div>').join('');}
 function cancelA(){PA=[];document.getElementById('awrap').style.display='none';}
-async function execA(){const b=document.getElementById('ebtn');b.disabled=true;b.textContent='Running...';for(const a of PA){lg('in','→ '+a.type+': '+a.description);await rA(a);}b.disabled=false;b.textContent='⚡ Execute in GHL';PA=[];document.getElementById('awrap').style.display='none';}
-async function rA(a){const p=a.params||{};try{switch(a.type){case'search_contacts':{const r=await ghl('/contacts/?locationId='+LOC+'&query='+encodeURIComponent(p.query||p.name||'')+'&limit=20','GET');const d=await r.json();lg(r.ok?'ok':'er','search: '+(r.ok?(d.contacts?.length||0)+' found':'Error '+r.status));if(r.ok&&d.contacts)showContactsInline(d.contacts);break;}case'send_message':{const r=await ghl('/conversations/messages','POST',{type:p.type||'SMS',message:p.message||'',contactId:p.contactId,locationId:LOC});lg(r.ok?'ok':'er','send: '+(r.ok?'✓':'Error '+r.status));break;}default:lg('er','Unknown: '+a.type);}}catch(e){lg('er',a.type+' failed: '+e.message);}}
+async function execA(){const b=document.getElementById('ebtn');b.disabled=true;b.textContent='Running...';for(const a of PA){lg('in','→ '+a.type);await rA(a);}b.disabled=false;b.textContent='⚡ Execute in GHL';PA=[];document.getElementById('awrap').style.display='none';}
+async function rA(a){const p=a.params||{};try{switch(a.type){case'search_contacts':{const r=await ghl('/contacts/?locationId='+LOC+'&query='+encodeURIComponent(p.query||p.name||'')+'&limit=20','GET');const d=await r.json();lg(r.ok?'ok':'er','search: '+(r.ok?(d.contacts?.length||0)+' found':'Error '+r.status));if(r.ok&&d.contacts)showCI(d.contacts);break;}case'send_message':{const r=await ghl('/conversations/messages','POST',{type:p.type||'SMS',message:p.message||'',contactId:p.contactId,locationId:LOC});lg(r.ok?'ok':'er','send: '+(r.ok?'✓':'Error '+r.status));break;}default:lg('er','Unknown: '+a.type);}}catch(e){lg('er',a.type+': '+e.message);}}
 
 // CONTACTS
-function showContactsInline(list){
-  const el=document.getElementById('cmd-results');
-  if(!list.length){el.innerHTML='<div style="color:#9ca3af;text-align:center;padding:16px;font-style:italic">No contacts found.</div>';return;}
-  el.innerHTML=`<div class="stats" style="margin-top:14px"><div class="stat"><div class="stat-val">${list.length}</div><div class="stat-lbl">Found</div></div><div class="stat"><div class="stat-val">${list.filter(c=>c.phone).length}</div><div class="stat-lbl">Have phone</div></div><div class="stat"><div class="stat-val">${list.filter(c=>c.email).length}</div><div class="stat-lbl">Have email</div></div></div><div class="contacts-grid">`+list.map(c=>cCard(c)).join('')+'</div>';
-}
-function cCard(c){const name=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';const initials=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();const sid=c.id.replace(/['"]/g,'');const sname=name.replace(/['"]/g,'');return `<div class="ccard"><div class="cavatar">${initials}</div><div class="ccard-name">${name}</div>${c.phone?`<div class="ccard-detail">📞 ${c.phone}</div>`:''} ${c.email?`<div class="ccard-detail">✉️ ${c.email}</div>`:''}<div class="ccard-actions"><button class="btn btn-sm" style="background:#f0faf6;border-color:#6EE7B7;color:#059669;flex:1" onclick="aC('${sid}','${sname}')">✦ Analyse</button><button class="btn btn-sm" style="flex:1" onclick="document.getElementById('mcid').value='${sid}';tab('messages')">✉ Msg</button><button class="btn btn-sm" style="flex:1" onclick="document.getElementById('ecid').value='${sid}';document.getElementById('en').value='${sname}';tab('estimates');loadEstimatesTab()">📋 Est</button></div></div>`;}
-async function srch(){const q=document.getElementById('csq').value.trim();lg('in','Searching: "'+q+'"');document.getElementById('contacts-results').innerHTML='<div style="color:#6b7280;text-align:center;padding:20px;font-style:italic">Searching GHL...</div>';try{const r=await ghl('/contacts/?locationId='+LOC+'&query='+encodeURIComponent(q)+'&limit=20','GET');const d=await r.json();if(r.ok){renderCC(d.contacts||[]);lg('ok','Found '+(d.contacts?.length||0));}else{document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Error '+r.status+'</div>';lg('er','Error: '+r.status);}}catch(e){lg('er',e.message);}}
-async function loadC(){lg('in','Loading contacts...');document.getElementById('contacts-results').innerHTML='<div style="color:#6b7280;text-align:center;padding:20px;font-style:italic">Loading from GHL...</div>';try{const r=await ghl('/contacts/?locationId='+LOC+'&limit=20','GET');const d=await r.json();if(r.ok){renderCC(d.contacts||[]);lg('ok','Loaded '+(d.contacts?.length||0));}else{document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Error '+r.status+': '+JSON.stringify(d).slice(0,100)+'</div>';lg('er','Error: '+r.status);}}catch(e){document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Failed: '+e.message+'</div>';lg('er',e.message);}}
-function renderCC(list){if(!list.length){document.getElementById('contacts-results').innerHTML='<div style="color:#9ca3af;padding:20px;text-align:center;font-style:italic">No contacts found.</div>';return;}document.getElementById('contacts-results').innerHTML='<div style="font-size:13px;color:#6b7280;margin-bottom:10px;font-weight:600">'+list.length+' contacts</div><div class="contacts-grid">'+list.map(c=>cCard(c)).join('')+'</div>';}
-async function aC(id,name){tab('contacts');document.getElementById('cabox').style.display='block';document.getElementById('caout').innerHTML='<span class="loading">Fetching '+name+'...</span>';try{const r=await ghl('/contacts/'+id,'GET');const d=await r.json();lg('ok','Fetched: '+name);const resp=await nova('Analyse this DCC GHL contact. Priority (1-10), what they need, exact next action, ready-to-send message.\n\n'+JSON.stringify(d.contact||d,null,2).slice(0,1500));document.getElementById('caout').textContent=resp;}catch(e){document.getElementById('caout').textContent='Error: '+e.message;}}
+function showCI(list){const el=document.getElementById('cmd-results');if(!list.length){el.innerHTML='<div style="color:#9ca3af;text-align:center;padding:16px">No contacts found.</div>';return;}el.innerHTML=`<div class="stats" style="margin-top:14px"><div class="stat"><div class="stat-val">${list.length}</div><div class="stat-lbl">Found</div></div><div class="stat"><div class="stat-val">${list.filter(c=>c.phone).length}</div><div class="stat-lbl">Have phone</div></div><div class="stat"><div class="stat-val">${list.filter(c=>c.email).length}</div><div class="stat-lbl">Have email</div></div></div><div class="contacts-grid">`+list.map(c=>cc(c)).join('')+'</div>';}
+function cc(c){const name=((c.firstName||'')+' '+(c.lastName||'')).trim()||'Unknown';const ini=name.split(' ').map(w=>w[0]||'').join('').slice(0,2).toUpperCase();const sid=c.id.replace(/['"]/g,'');const sn=name.replace(/['"]/g,'');return `<div class="ccard"><div class="cavatar">${ini}</div><div class="ccard-name">${name}</div>${c.phone?`<div class="ccard-detail">📞 ${c.phone}</div>`:''} ${c.email?`<div class="ccard-detail">✉️ ${c.email}</div>`:''}<div class="ccard-actions"><button class="btn btn-sm" style="background:#f0faf6;border-color:#6EE7B7;color:#059669;flex:1" onclick="aC('${sid}','${sn}')">✦ Analyse</button><button class="btn btn-sm" style="flex:1" onclick="document.getElementById('mcid').value='${sid}';tab('messages')">✉ Msg</button><button class="btn btn-sm" style="flex:1" onclick="document.getElementById('ecid').value='${sid}';document.getElementById('en').value='${sn}';tab('estimates');loadEstTab()">📋 Est</button></div></div>`;}
+async function srch(){const q=document.getElementById('csq').value.trim();lg('in','Searching: "'+q+'"');document.getElementById('contacts-results').innerHTML='<div style="color:#6b7280;text-align:center;padding:20px;font-style:italic">Searching...</div>';try{const r=await ghl('/contacts/?locationId='+LOC+'&query='+encodeURIComponent(q)+'&limit=20','GET');const d=await r.json();if(r.ok){rCC(d.contacts||[]);lg('ok','Found '+(d.contacts?.length||0));}else{document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Error '+r.status+'</div>';lg('er','Error: '+r.status);}}catch(e){lg('er',e.message);}}
+async function loadC(){lg('in','Loading...');document.getElementById('contacts-results').innerHTML='<div style="color:#6b7280;text-align:center;padding:20px;font-style:italic">Loading from GHL...</div>';try{const r=await ghl('/contacts/?locationId='+LOC+'&limit=20','GET');const d=await r.json();if(r.ok){rCC(d.contacts||[]);lg('ok','Loaded '+(d.contacts?.length||0));}else{document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Error '+r.status+'</div>';lg('er','Error: '+r.status);}}catch(e){document.getElementById('contacts-results').innerHTML='<div style="color:#dc2626;padding:16px">Failed: '+e.message+'</div>';lg('er',e.message);}}
+function rCC(list){if(!list.length){document.getElementById('contacts-results').innerHTML='<div style="color:#9ca3af;padding:20px;text-align:center;font-style:italic">No contacts found.</div>';return;}document.getElementById('contacts-results').innerHTML='<div style="font-size:13px;color:#6b7280;margin-bottom:10px;font-weight:600">'+list.length+' contacts</div><div class="contacts-grid">'+list.map(c=>cc(c)).join('')+'</div>';}
+async function aC(id,name){tab('contacts');document.getElementById('cabox').style.display='block';document.getElementById('caout').innerHTML='<span class="loading">Fetching '+name+'...</span>';try{const r=await ghl('/contacts/'+id,'GET');const d=await r.json();lg('ok','Fetched: '+name);const resp=await nova('Analyse this DCC GHL contact. Priority (1-10), what they need, next action, ready-to-send message.\n\n'+JSON.stringify(d.contact||d,null,2).slice(0,1500));document.getElementById('caout').textContent=resp;}catch(e){document.getElementById('caout').textContent='Error: '+e.message;}}
 
 // MESSAGES
 async function sndMsg(){const cid=document.getElementById('mcid').value.trim();const body=document.getElementById('mbody').value.trim();const type=document.getElementById('mtype').value;if(!cid||!body){alert('Enter contact ID and message.');return;}lg('in','Sending '+type+'...');try{const r=await ghl('/conversations/messages','POST',{type,message:body,contactId:cid,locationId:LOC});const d=await r.json();lg(r.ok?'ok':'er',type+': '+(r.ok?'✓ Sent':'Error '+r.status));if(r.ok){document.getElementById('mbox').style.display='block';document.getElementById('mout').textContent='✅ Message sent!';document.getElementById('mbody').value='';}}catch(e){lg('er',e.message);}}
 async function draftM(){document.getElementById('mbox').style.display='block';document.getElementById('mout').innerHTML='<span class="loading">Drafting...</span>';const resp=await nova('Draft a professional DCC '+document.getElementById('mtype').value+' for contact '+document.getElementById('mcid').value+'. Context: "'+document.getElementById('mbody').value+'". Output just the message text.');document.getElementById('mout').textContent=resp;document.getElementById('mbody').value=resp;}
 
-// HELPERS
 function loadEx(){document.getElementById('en').value='Sophie Pettit';document.getElementById('et').value='mould';document.getElementById('ea').value='12';document.getElementById('epth').value='report';document.getElementById('etc').value='2';document.getElementById('ed').value='2';document.getElementById('edisp').value='yes';document.getElementById('esafe').value='no';document.getElementById('erevis').value='no';document.getElementById('edesc').value='Black mould in 2 rooms, 12m² total. Moisture 80%+. Customer has report.';}
 function gJ(){return{name:document.getElementById('en').value,cid:document.getElementById('ecid').value,type:document.getElementById('et').value,area:document.getElementById('ea').value,techs:document.getElementById('etc').value,days:document.getElementById('ed').value,disp:document.getElementById('edisp').value,safe:document.getElementById('esafe').value,revis:document.getElementById('erevis').value,desc:document.getElementById('edesc').value,notes:document.getElementById('enotes')?.value||''};}
 
-async function nova(p){try{const r=await fetch('https://api.anthropic.com/v1/messages',{method:'POST',headers:{'Content-Type':'application/json','x-api-key':AKEY,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:SYS,messages:[{role:'user',content:p}]})});const d=await r.json();return d.content?.map(b=>b.text||'').join('')||'No response.';}catch(e){return 'Nova error: '+e.message;}}
+async function nova(p){try{const r=await fetch('/api/nova',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({model:'claude-sonnet-4-6',max_tokens:1000,system:SYS,messages:[{role:'user',content:p}]})});const d=await r.json();return d.content?.map(b=>b.text||'').join('')||'No response.';}catch(e){return 'Nova error: '+e.message;}}
 
-lg('ok','Nova v2.0 ready — GHL products + estimates + invoices ✓');
+lg('ok','Nova v3.0 ready ✓');
 </script>
 </body>
 </html>
