@@ -300,7 +300,18 @@ const LOC='TWgGz6l5KiTwyqZbcXLG';
 // API key handled server-side
 let allP=[],selP={},PA=[],LG=[],lastEstId=null;
 
-const SYS=`You are Nova, AI BDR agent for Disaster Care Capital (DCC), UK disaster restoration (water, mould, fire). GHL location: TWgGz6l5KiTwyqZbcXLG. SOP: initial visit £250, dehumidifier dry-out by m², mould treatment+antimicrobial by m², fire restoration, PPE per tech per day, 1 senior+junior techs, disposal in lbs, revisit if needed, safety check with note. Invoice mirrors estimate, due 7 days. When planning actions output: ACTION_PLAN: [{"type":"search_contacts"|"create_estimate"|"create_invoice"|"send_message"|"update_contact","params":{...},"description":"readable"}]`;
+const SYS=`You are Nova, a sharp AI BDR agent for Disaster Care Capital (DCC), UK disaster restoration company (water, mould, fire). GHL location: TWgGz6l5KiTwyqZbcXLG.
+
+Rules:
+- Never use markdown formatting like ** or ## in your responses. Write in plain text only.
+- Always be direct and specific. No fluff.
+- When you need to fetch data from GHL, always output an ACTION_PLAN immediately. Do not ask for permission.
+- DCC SOP: initial visit £250 (no report), dehumidifier dry-out by m², mould treatment+antimicrobial by m², fire restoration, PPE per tech per day, 1 senior + junior techs, disposal in lbs, revisit if needed, safety check with note in estimate. Invoice mirrors estimate exactly, due 7 days only.
+
+When you need to take a GHL action, end your response with:
+ACTION_PLAN: [{"type":"search_contacts"|"create_estimate"|"create_invoice"|"send_message"|"update_contact","params":{...},"description":"what this does"}]
+
+Always include the ACTION_PLAN when data needs to be fetched or an action needs to be taken.`;
 
 function unlock(){const v=document.getElementById('pw').value;if(v===PWD){sessionStorage.setItem('nova_auth','1');document.getElementById('lock').style.display='none';document.getElementById('app').style.display='block';}else{document.getElementById('pw-err').textContent='Incorrect password.';document.getElementById('pw').value='';document.getElementById('pw').focus();}}
 function logout(){sessionStorage.removeItem('nova_auth');document.getElementById('lock').style.display='flex';document.getElementById('app').style.display='none';document.getElementById('pw').value='';document.getElementById('pw-err').textContent='';}
@@ -488,7 +499,13 @@ async function runCmd(){
   const r=await nova('GHL Location:'+LOC+'\nCommand:'+cmd);
   const m=r.match(/ACTION_PLAN:\s*(\[[\s\S]*?\])/);
   document.getElementById('cout').textContent=r.replace(/ACTION_PLAN:[\s\S]*$/,'').trim();
-  if(m){try{PA=JSON.parse(m[1]);rPA();}catch(e){}}
+  if(m){try{PA=JSON.parse(m[1]);rPA();autoExec();}catch(e){}}
+}
+async function autoExec(){
+  if(!PA.length)return;
+  document.getElementById('awrap').style.display='none';
+  for(const a of PA){lg('in','Auto-executing: '+a.type);await rA(a);}
+  PA=[];
 }
 function rPA(){if(!PA.length)return;document.getElementById('awrap').style.display='block';document.getElementById('alist').innerHTML=PA.map((a,i)=>'<div class="aitem"><span class="abadge">'+a.type+'</span><span style="flex:1">'+a.description+'</span><button class="btn btn-sm" onclick="PA.splice('+i+',1);rPA()" style="color:#dc2626;padding:3px 8px">✕</button></div>').join('');}
 function cancelA(){PA=[];document.getElementById('awrap').style.display='none';}
